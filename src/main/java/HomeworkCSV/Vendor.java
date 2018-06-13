@@ -1,9 +1,25 @@
 package HomeworkCSV;
 
+/**
+ * Vendor class
+ */
 public class Vendor {
+    /**
+     * name of the Vendor
+     */
     private String name;
+    /**
+     * units of the Vendor
+     */
     private double units;
-    //private double percantage;
+    /**
+     * his share on totalUnits
+     */
+    private double share;
+
+    /**
+     * Constructor of the new vendor its name and units
+     */
     public Vendor(String name, double units){
         this.name = name;
         this.units = units;
@@ -17,13 +33,11 @@ public class Vendor {
         return units;
     }
 
-    public void setName(String name) {
-
-        this.name = name;
+    public double getShare() {
+        return share;
     }
 
-    public void setUnits(double units) {
-        this.units = units;
+    public void setShare(double share) {
+        this.share = share;
     }
-
 }
