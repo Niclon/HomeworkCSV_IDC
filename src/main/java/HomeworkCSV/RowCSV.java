@@ -2,6 +2,9 @@ package HomeworkCSV;
 
 import com.opencsv.bean.CsvBindByName;
 
+/**
+ * This class is for one row from CSV file
+ */
 public class RowCSV {
     @CsvBindByName(column = "Country")
     private String Country;

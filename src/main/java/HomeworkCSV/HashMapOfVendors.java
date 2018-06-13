@@ -58,14 +58,15 @@ public class HashMapOfVendors {
     public String getUnitsAndShare(String vendorName){
         DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
-        String result=vendorName + ", ";
+        StringBuilder sb = new StringBuilder();
+        sb.append(vendorName + ", ");
 
         if(hashMap.isEmpty()){  fillTheHashMap(); }
 
-        result += hashMap.get(vendorName).intValue()+", ";
-        result +=df.format((hashMap.get(vendorName)*100)/this.totalUnits)+ "% ";
+        sb.append( String.format("%,d", hashMap.get(vendorName).intValue())+", ");
+        sb.append( df.format((hashMap.get(vendorName)*100)/this.totalUnits)+ "% ");
 
-        return  result ;
+        return  sb.toString() ;
 
     }
     /**
@@ -111,14 +112,15 @@ public class HashMapOfVendors {
     public String getUnitsAndShareForHTML(String vendorName){
         DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
-        String result="<tr align=\"center\"> <td> " + vendorName + " </td> <td> ";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<tr align=\"center\"> <td> " + vendorName + " </td> <td> ");
 
         if(hashMap.isEmpty()){  fillTheHashMap(); }
 
-        result += hashMap.get(vendorName).intValue()+" </td> ";
-        result +="<td> "+ df.format((hashMap.get(vendorName)*100)/this.totalUnits)+ "% </td> </tr>";
+        sb.append( String.format("%,d", hashMap.get(vendorName).intValue()) +" </td> ");
+        sb.append( "<td> "+ df.format((hashMap.get(vendorName)*100)/this.totalUnits)+ "% </td> </tr>");
 
-        return  result ;
+        return  sb.toString() ;
     }
     /**
      * This method returns string with html tags and all info about Vendors etc.
@@ -146,26 +148,54 @@ public class HashMapOfVendors {
         }
         return -1;
     }
+
+    /**
+     * This method create string for output to commandline from cached hashMap in keyOrder
+     * @return string of output
+     */
+    public String visualizeOutputTable(){
+        if(hashMap.isEmpty()){  fillTheHashMap(); }
+        StringBuilder sb = new StringBuilder();
+        for (Object key: keyOrder) {
+            sb.append(getUnitsAndShare((String)key)+ "\n");
+        }
+        sb.append("Total  "+ String.format("%,d", (int)totalUnits) + " 100%  \n");
+        return sb.toString();
+    }
     /**
      * This method change order of keys in keyOrder and sort it with alphabetComparator by name and then call method visualizeOutputTableInHTML
      */
-    public String sortedHashMapAlphabeticallyInHTML(){
+    public void sortHashMapAlphabetically(){
         Object[] keys = hashMap.keySet().toArray();
         Arrays.sort(keys,new alphabetComparator());
         this.keyOrder = keys;
-        return visualizeOutputTableInHTML();
     }
     /**
      * This method sort keyOrder by Vendor units and then call method visualizeOutputTableInHTML
+     * these two methods are quite not important
      */
     public String sortedHashMapByUnitsInHTML(){
+        sortHashMapByUnits();
+        return visualizeOutputTableInHTML();
+    }
+    /**
+     * This method call method to sort HashMap by name and then call method visualizeOutputTableInHTML()
+     */
+    public String sortedHashMapAlphabeticallyInHTML(){
+        sortHashMapAlphabetically();
+        return visualizeOutputTableInHTML();
+    }
+
+    /**
+     * This method change order of keys in keyOrder and sort it by Units
+     */
+    public void sortHashMapByUnits(){
         Object[] values = hashMap.values().toArray();
         Arrays.sort(values,new unitsComparator());
 
         for (int i = 0; i<values.length;i++){
             keyOrder[i]=getKeyFromValue(hashMap,values[i]);
         }
-        return visualizeOutputTableInHTML();
     }
 
     /**
