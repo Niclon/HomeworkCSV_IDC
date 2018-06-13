@@ -19,32 +19,14 @@ public class RowCSV {
         return Timescale;
     }
 
-    public void setTimescale(String timescale) {
-        Timescale = timescale;
-    }
-
     public String getVendor() {
         return Vendor;
-    }
-
-    public void setVendor(String vendor) {
-        Vendor = vendor;
     }
 
     public double getUnits() {
         return Units;
     }
 
-    public void setUnits(double units) {
-        Units = units;
-    }
+    public String getCountry() { return Country; }
 
-    public String getCountry() {
-
-        return Country;
-    }
-
-    public void setCountry(String country) {
-        Country = country;
-    }
 }

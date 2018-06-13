@@ -1,6 +1,8 @@
 package HomeworkCSV;
 
-import java.lang.reflect.Array;
+import org.apache.commons.io.FileUtils;
+import java.io.File;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -34,12 +36,12 @@ public class HashMapOfVendors {
     public String getUnitsAndShare(String vendorName){
         DecimalFormat df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
-        String result="<tr> <td> " + vendorName + " </td> <td> ";
+        String result=vendorName + ", ";
 
         if(hashMap.isEmpty()){  fillTheHashMap(); }
 
-        result += hashMap.get(vendorName).intValue()+" </td> ";
-        result +="<td> "+ df.format((hashMap.get(vendorName)*100)/this.totalUnits)+ "% </td> </tr>";
+        result += hashMap.get(vendorName).intValue()+", ";
+        result +=df.format((hashMap.get(vendorName)*100)/this.totalUnits)+ "% ";
 
         return  result ;
 
@@ -50,25 +52,39 @@ public class HashMapOfVendors {
         }
         this.keyOrder = hashMap.keySet().toArray();
     }
-    /*
-    public String visualizePlainOutputTable(){
-        if(hashMap.isEmpty()){  fillTheHashMap(); }
-        String out = "<table> \n<tr> <td> Vendor </td> <td> Units </td> <td> Share </td> </tr> \n";
-        for (String key: hashMap.keySet()) {
-            out+= getUnitsAndShare(key)+ "\n";
+    public void fillTheHashMap(String timescale){
+        for (RowCSV row : ReaderCSV.getInstance().getData()  ) {
+            if(row.getTimescale().equals(timescale))
+                addVendor(new Vendor(row.getVendor(),row.getUnits()));
         }
-        out+= "<tr> <td bgcolor= \" #FFFF00\"> Total </td> <td bgcolor= \" #FFFF00\"> "+ String.format("%,d", (int)totalUnits) + " </td> <td bgcolor= \" #FFFF00\"> 100% </td> </tr> \n</table>";
-        return out;
+        this.keyOrder = hashMap.keySet().toArray();
     }
-    */
+    public void updateGivenQuater(String timescale){
+        hashMap.clear();
+        totalUnits = 0;
+        keyOrder=null;
+        fillTheHashMap(timescale);
+    }
+    public String getUnitsAndShareForHTML(String vendorName){
+        DecimalFormat df = new DecimalFormat("#.#");
+        df.setRoundingMode(RoundingMode.CEILING);
+        String result="<tr align=\"center\"> <td> " + vendorName + " </td> <td> ";
+
+        if(hashMap.isEmpty()){  fillTheHashMap(); }
+
+        result += hashMap.get(vendorName).intValue()+" </td> ";
+        result +="<td> "+ df.format((hashMap.get(vendorName)*100)/this.totalUnits)+ "% </td> </tr>";
+
+        return  result ;
+    }
     public String visualizeOutputTableInHTML(){
         if(hashMap.isEmpty()){  fillTheHashMap(); }
-        String out = "<table> \n<tr> <td> Vendor </td> <td> Units </td> <td> Share </td> </tr> \n";
+        StringBuilder sb = new StringBuilder();
         for (Object key: keyOrder) {
-            out+= getUnitsAndShare((String)key)+ "\n";
+            sb.append(getUnitsAndShareForHTML((String)key)+ "\n");
         }
-        out+= "<tr> <td bgcolor= \" #FFFF00\"> Total </td> <td bgcolor= \" #FFFF00\"> "+ String.format("%,d", (int)totalUnits) + " </td> <td bgcolor= \" #FFFF00\"> 100% </td> </tr> \n</table>";
-        return out;
+        sb.append("<tr align=\"center\"> <td bgcolor= \" #FFFF00\"> Total </td> <td bgcolor= \" #FFFF00\"> "+ String.format("%,d", (int)totalUnits) + " </td> <td bgcolor= \" #FFFF00\"> 100% </td> </tr> \n");
+        return sb.toString();
     }
     public int tablePlaceVendorInfo(String vendorName){
         int rowId=1;
@@ -95,6 +111,7 @@ public class HashMapOfVendors {
         }
         return visualizeOutputTableInHTML();
     }
+
 
     private static Object getKeyFromValue(HashMap hm, Object value) {
         for (Object o : hm.keySet()) {
@@ -123,6 +140,29 @@ public class HashMapOfVendors {
                 return 1;
             }
         }
+    }
+    public static final class Exporter{
+        private Exporter(){ }
+        public static void toHTML(HashMapOfVendors hashMapOfVendors){
+            try {
+                File htmlTemplateFile = new File("C:\\Users\\MSI\\Desktop\\IDC-project\\HomeworkCSV_IDC\\src\\main\\resources\\Templates\\tableTemplate.html");
+                String htmlString = FileUtils.readFileToString(htmlTemplateFile);
+                String body =  hashMapOfVendors.visualizeOutputTableInHTML();
+                htmlString = htmlString.replace("$body", body);
+                File newHtmlFile = new File("C:\\Users\\MSI\\Desktop\\IDC-project\\HomeworkCSV_IDC\\src\\main\\resources\\Templates\\table.html");
+                FileUtils.writeStringToFile(newHtmlFile, htmlString);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        public static void toCSV(HashMapOfVendors hashMapOfVendors){
+
+        }
+        public static void toExcel(HashMapOfVendors hashMapOfVendors){
+
+        }
+
     }
 }
 

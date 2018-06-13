@@ -1,11 +1,6 @@
 package HomeworkCSV;
-
-import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +12,7 @@ import java.util.List;
 
 public class ReaderCSV {
 
-    public static final String CSV_PATH = "C:\\Users\\MSI\\Desktop\\IDC-project\\homeworkIDC\\Main\\data.csv";
+    public static final String CSV_PATH = "C:\\Users\\MSI\\Desktop\\IDC-project\\HomeworkCSV_IDC\\data.csv";
     private List<RowCSV> data;
     private static ReaderCSV instance = new ReaderCSV();
 
